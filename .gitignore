@@ -130,3 +130,11 @@ dmypy.json
 
 # .idea
 .idea/
+
+# project specific
+/resources/
+/data/
+/models/
+/logs/
+config.ini
+config.dev.ini
