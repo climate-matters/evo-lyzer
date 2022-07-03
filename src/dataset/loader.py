@@ -60,6 +60,7 @@ def _load_participants(path=None):
         event_type='Joined'
     )
     df = df.assign(event_id=_build_id(df['datetime'].astype(str), df['event_type']))
+    df = df.assign(event_id=df['event_id'].fillna(-1).astype(int))
     valid_idx = df['twitter'].str.match(r'^[A-Za-z0-9_]+$').astype(bool)
     df.loc[~valid_idx, ['twitter']] = np.nan
     columns = ['subject_id', 'name', 'position', 'participant', 'event_id', 'event_type', 'datetime', 'twitter']
@@ -91,9 +92,8 @@ def _load_workshops(path=None):
         twitter=df['twitter'].str.replace(u'\u200f', '').str.strip().str.replace(r'(^@+)|([,.]+$)', '', regex=True),
         event_type='Workshop',
     )
-    df = df.assign(
-        event_id=_build_id(df['datetime'].astype(str), df['event_type']),
-    )
+    df = df.assign(event_id=_build_id(df['datetime'].astype(str), df['event_type']))
+    df = df.assign(event_id=df['event_id'].fillna(-1).astype(int))
     valid_idx = df['twitter'].str.match(r'^[A-Za-z0-9_]+$').astype(bool)
     df.loc[~valid_idx, ['twitter']] = np.nan
     columns = ['subject_id', 'name', 'position', 'participant', 'event_id', 'event_type', 'datetime', 'twitter']
@@ -110,7 +110,7 @@ def _load_weathercasters(path=None):
     df = pd.read_csv(path)
     df = df.assign(
         subject_id=_build_id(df['name']),
-        event_id=np.nan,
+        event_id=-1,
         event_type=np.nan,
         twitter=df['twitter'].str.replace(u'\u200f', '').str.strip().str.replace(r'(^@+)|([,.]+$)', '', regex=True),
         datetime=np.nan,

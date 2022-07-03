@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block stylesheets %}
+    {{ super() }}
+    {{ topic_vis.css_resources | safe }}
+{% endblock %}
+
+{% block content %}
+    <div class="container is-fluid">
+        <div class="topic-properties pb-3">
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field">
+                        <label class="label" for="topicSelection">Topic</label>
+                        <div class="select">
+                            <select id="topicSelection">
+                                <option value=0 {% if topic_index == -1 %}selected{% endif %}>Not Selected</option>
+                                {% for topic in topics %}
+                                    <option value={{ topic.index + 1 }}
+                                                    {% if topic_index == topic.index %}selected{% endif %}>
+                                        {{ topic.label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="topicLabel">Label</label>
+                        <div class="control">
+                            <input id="topicLabel" class="input" type="text" placeholder="Text input"
+                                   name="label" value="{{ topic.label }}">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="isRelevant">Relevant?</label>
+                        <div class="control">
+                            <input id="isRelevant" type="checkbox" name="is_relevant"
+                                   {% if topic.is_relevant %}checked{% endif %}>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="submitButton" hidden>...</label>
+                        <button id="submitButton" class="button">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="topic-visualization pb-3">{{ topic_vis.div | safe }}</div>
+        <div class="documents-table pb-3">
+            {{ documents_table | safe }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ topic_vis.js_resources | safe }}
+    {{ topic_vis.script | safe }}
+    <script type="text/javascript">
+        let currentTopic = 0;
+        // state events
+        history.addEventListener('change', function (e) {
+            if (e.state.hasOwnProperty('topic')) {
+                if (currentTopic !== e.state.topic) {
+                    currentTopic = e.state.topic;
+                    up.render({
+                        target: '.topic-properties,.documents-table',
+                        url: '{{ url_for('topics_page.topics') }}' + '?topic=' + currentTopic,
+                    });
+                } else {
+                    currentTopic = e.state.topic;
+                }
+            }
+        });
+        // change topic
+        up.on('change', 'select#topicSelection', function (event, element) {
+            let topic_id = parseInt(event.target.value);
+            ldavis.set_topic(topic_id);
+        });
+        // button click
+        up.on('click', 'button#submitButton', function (event, element) {
+            let topicLabel = document.getElementById('topicLabel').value;
+            let isRelevant = document.getElementById('isRelevant').checked;
+            console.log({
+                topicLabel: topicLabel,
+                isRelevant: isRelevant,
+            });
+            up.render({
+                target: '.topic-properties',
+                url: '{{ url_for('topics_page.topics') }}' + '?topic=' + currentTopic
+                    + '&is_relevant=' + isRelevant
+                    + '&label=' + encodeURIComponent(topicLabel),
+            });
+        })
+    </script>
+{% endblock %}

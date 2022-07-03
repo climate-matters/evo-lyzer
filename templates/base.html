@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Evo-Lyzer{% endblock %}</title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+            <link rel="stylesheet" href="{{ url_for('static', filename='packages/unpoly/unpoly.min.css') }}"/>
+            <script src="{{ url_for('static', filename='packages/unpoly/unpoly.min.js') }}"></script>
+        {% endblock %}
+    {% endblock %}
+</head>
+<body>
+{% block body -%}
+    {%- block header %}
+        {% include "partials/header.html" ignore missing %}
+    {% endblock %}
+    {% block content %}{% endblock %}
+    {% block footer %}
+        {% include "partials/footer.html" ignore missing %}
+    {% endblock %}
+    {% block scripts %}{% endblock -%}
+{%- endblock -%}
+</body>
+</html>

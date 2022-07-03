@@ -1,0 +1,51 @@
+{%- extends 'base.html' -%}
+
+{%- block stylesheets %}
+    {{ super() }}
+    {{ plots.intra_subject.divergence[0].css_resources | safe }}
+{% endblock -%}
+
+{%- block content %}
+    <div class="container is-fluid">
+        <div class="relevant-topic-labels pb-3">{%- for topic_col in relevant_topics_cols %}
+            <span class="tag is-medium">{{ topic_col }}</span>
+        {% endfor -%}</div>
+        <div>
+            <h1 class="is-size-5 is-uppercase is-family-monospace">Intra-subject Divergence</h1>
+            <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                {% for plot in plots.intra_subject.divergence %}
+                    <div style="width: 450px">
+                        <p>
+                            {% for prop in plot.properties %}
+                                <span>{{ prop.name }}: {{ prop.value }}</span>
+                            {% endfor %}
+                        </p>
+                        <div>{{ plot.div | safe }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h1 class="is-size-5 is-uppercase is-family-monospace">Inter-subject Divergence</h1>
+            <div class="is-flex is-flex-direction-row is-flex-wrap-wrap">
+                {% for plot in plots.inter_subject.divergence %}
+                    <div style="width: 450px">
+                        <p>
+                            {% for prop in plot.properties %}
+                                <span>{{ prop.name }}: {{ prop.value }}</span>
+                            {% endfor %}
+                        </p>
+                        {{ plot.div | safe }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock -%}
+
+{%- block scripts %}
+    {{ super() }}
+    {{ plots.intra_subject.divergence[0].js_resources | safe }}
+    {% for plot in plots.intra_subject.divergence %}{{ plot.script | safe }}{% endfor %}
+    {% for plot in plots.inter_subject.divergence %}{{ plot.script | safe }}{% endfor %}
+{% endblock -%}
