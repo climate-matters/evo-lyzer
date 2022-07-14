@@ -133,7 +133,7 @@ dmypy.json
 
 # project specific
 /resources/
-/data/
+/data/*/*
 /models/
 /logs/
 config.ini
